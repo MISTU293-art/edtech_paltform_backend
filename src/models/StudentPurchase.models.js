@@ -14,14 +14,8 @@ const studentPurchaseSchema = new mongoose.Schema(
       required: true,
     },
 
-    instructor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-    },
-
     amountPaid: {
-      type: Number,
+      type: String,
       required: true,
     },
 
@@ -46,6 +40,6 @@ const studentPurchaseSchema = new mongoose.Schema(
   },
 );
 
-const purchaseModel = mongoose.model("purchase",studentPurchaseSchema);
+const purchaseModel = mongoose.model("purchase", studentPurchaseSchema);
 
 export default purchaseModel;

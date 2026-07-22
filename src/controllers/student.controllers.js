@@ -1,5 +1,6 @@
 import courseModel from "../models/Course.models.js";
-import purchaseModel from '../models/StudentPurchase.models.js'
+import purchaseModel from "../models/StudentPurchase.models.js";
+import cryptoRandomString from "crypto-random-string";
 async function allCourse(req, res) {
   try {
     const course = await courseModel.find().populate("instructor", "username");
@@ -15,18 +16,57 @@ async function allCourse(req, res) {
   }
 }
 
-async function buyCourse(req,res) {
-try{
-    const {amountPaid,paymentStatus="completed",paymentId}=req.body;
+async function buyCourse(req, res) {
+  try {
+    const { amountPaid, paymentStatus = "completed", courseId } = req.body;
+    const PaymentId = cryptoRandomString({ length: 10, type: "numeric" });
 
-}
-catch(error){
+    const buyData = await purchaseModel.create({
+      amountPaid,
+      paymentStatus,
+      paymentId: PaymentId,
+      courseId,
+      student: req.user._id,
+      course: courseId,
+    });
+    return res.status(201).json({
+      message: "Course Purchase Successfully",
+      buyData,
+    });
+  } catch (error) {
     console.log(error);
     return res.status(500).json({
-        message:"Internal Server Error"
-    })
+      message: "Internal Server Error",
+    });
+  }
 }
-    
-}
+async function viewPurchasedCourse(req, res) {
+  try {
+    const student = req.user._id;
 
-export { allCourse };
+    const data = await purchaseModel.findOne({ student }).populate({
+      path: "course",
+      populate: {
+        path: "instructor",
+        select: "name username createdAt",
+      },
+    });
+    
+    if (!data) {
+      return res.status(404).json({
+        message: "No purchased course found",
+      });
+    }
+
+    return res.status(200).json({
+      data,
+      instructor: data.course.instructor,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+}
+export { allCourse, buyCourse, viewPurchasedCourse };
