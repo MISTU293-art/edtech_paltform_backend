@@ -1,0 +1,44 @@
+{
+  "name": "edtech_platform",
+  "version": "1.0.0",
+  "description": "New project on EdTech platform backend",
+  "keywords": [
+    "edtech",
+    "udemy_backend"
+  ],
+  "homepage": "https://github.com/MISTU293-art/edtech_paltform_backend#readme",
+  "bugs": {
+    "url": "https://github.com/MISTU293-art/edtech_paltform_backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MISTU293-art/edtech_paltform_backend.git"
+  },
+  "license": "ISC",
+  "author": "Mistu Debnath",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0"
+  },
+  "dependencies": {
+    "@imagekit/nodejs": "^7.10.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.8.0",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "nodemon": "^3.1.14"
+  }
+}
