@@ -33,7 +33,7 @@ async function courseSellAnalysis(req, res) {
     // Find all courses owned by this instructor
     const courses = await courseModel.find({ instructor: instructorId });
 
-    const courseIds = courses.map(course => course._id);
+    const courseIds = courses.map((course) => course._id);
 
     // Find all purchases for those courses
     const purchases = await purchaseModel
@@ -53,4 +53,44 @@ async function courseSellAnalysis(req, res) {
     });
   }
 }
-export { createCourse, courseSellAnalysis };
+
+async function deleteCourse(req, res) {
+  try {
+    const { _id } = req.params;
+    const data = await courseModel.findOne({ _id });
+    return res.status(404).json({
+      message: "Course not Found",
+    });
+    await courseModel.deleteOne({ _id });
+    return res.status(200).json({
+      message: "Course Deleted",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error.",
+    });
+  }
+}
+
+async function updateCourse(req, res) {
+  try {
+    const { _id } = req.params;
+    const { title, price } = req.body;
+    console.log(req.body);
+    const course = await courseModel.findOneAndUpdate(
+      { _id },
+      { title, price },
+      { new: true },
+    );
+    return res.status(200).json({
+      message: "Course Updated",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+}
+export { createCourse, courseSellAnalysis, deleteCourse, updateCourse };
