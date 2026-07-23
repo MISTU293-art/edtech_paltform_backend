@@ -1,16 +1,16 @@
 import jwt from "jsonwebtoken";
 
 async function authInstructor(req, res, next) {
-  const token = req.cookies.token;
+  const accessToken = req.cookies.accessToken;
 
-  if (!token) {
+  if (!accessToken) {
     return res.status(401).json({
       message: "Unauthorized",
     });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
     if (decoded.role != "instructor") {
       return res.status(401).json({
         message: "You Have Not Access To This Page.",
@@ -27,15 +27,15 @@ async function authInstructor(req, res, next) {
 }
 
 async function authStudent(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) {
+  const accessToken = req.cookies.accessToken;
+  if (!accessToken) {
     return res.status(401).json({
       message: "Unauthorized",
     });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {

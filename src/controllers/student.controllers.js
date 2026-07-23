@@ -75,5 +75,7 @@ async function viewPurchasedCourse(req, res) {
       message: "Internal Server Error",
     });
   }
-}
+};
+
+
 export { allCourse, buyCourse, viewPurchasedCourse };

@@ -21,7 +21,18 @@ async function registeruser(req, res) {
       password: hashedPassword,
       role,
     });
-    const token = jwt.sign(
+    const refreshToken = jwt.sign(
+      {
+        _id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
+    const accessToken = jwt.sign(
       {
         _id: user._id,
         role: user.role,
@@ -29,14 +40,27 @@ async function registeruser(req, res) {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1d",
+        expiresIn: "1m",
       },
     );
-    res.cookie("token", token);
+    user.refreshToken = refreshToken;
+    await user.save();
+    res.cookie("accessToken", accessToken, {
+      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 1000,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+    });
     return res.status(201).json({
       message: "Registration SuccessFull",
       user,
-      token,
+      accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -62,21 +86,59 @@ async function loginUser(req, res) {
     });
   }
 
-  const token = jwt.sign(
+  const accessToken = jwt.sign(
     {
       _id: user._id,
       role: user.role,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "1m",
     },
   );
-  res.cookie("token", token);
+
+  const refreshToken = jwt.sign(
+    {
+      _id: user._id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1m",
+    },
+  );
+  user.refreshToken = refreshToken;
+  await user.save();
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: true,
+  });
   return res.status(200).json({
     message: "Login Success",
     user,
-    token,
+    accessToken,
   });
 }
-export { registeruser, loginUser };
+
+async function logout(req, res) {
+  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
+
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+
+  return res.status(200).json({
+    message: "Logout Successfull",
+  });
+} 
+export { registeruser, loginUser, logout };

@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema(
       enum: ["student", "instructor"],
       default: "student",
     },
+    refreshToken:{
+      type:String,
+      default:null
+    }
   },
   {
     timestamps: true,
