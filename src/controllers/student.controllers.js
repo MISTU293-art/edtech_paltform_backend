@@ -1,6 +1,7 @@
 import courseModel from "../models/Course.models.js";
 import purchaseModel from "../models/StudentPurchase.models.js";
 import cryptoRandomString from "crypto-random-string";
+
 async function allCourse(req, res) {
   try {
     const page = Number(req.query.page) || 1;
@@ -75,7 +76,6 @@ async function viewPurchasedCourse(req, res) {
       message: "Internal Server Error",
     });
   }
-};
-
+}
 
 export { allCourse, buyCourse, viewPurchasedCourse };

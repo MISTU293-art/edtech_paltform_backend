@@ -1,6 +1,7 @@
 import userModel from "../models/User.models.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import sendRegisterMail from "../services/register_mail.services.js";
 async function registeruser(req, res) {
   try {
     const { username, name, password, role = "student", email } = req.body;
@@ -57,6 +58,7 @@ async function registeruser(req, res) {
       httpOnly: true,
       secure: true,
     });
+    sendRegisterMail(user.email, user.name,user.role);
     return res.status(201).json({
       message: "Registration SuccessFull",
       user,
@@ -140,5 +142,5 @@ async function logout(req, res) {
   return res.status(200).json({
     message: "Logout Successfull",
   });
-} 
+}
 export { registeruser, loginUser, logout };
